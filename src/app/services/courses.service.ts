@@ -19,4 +19,9 @@ export class CoursesService {
       );
   }
 
+  public saveCourse(courseId: string, changes: Partial<Course>): Observable<Course> {
+    return this.http.put<Course>(`/api/courses/${courseId}`, changes)
+      .pipe(shareReplay());
+  }
+
 }
