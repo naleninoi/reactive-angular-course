@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Course, sortCoursesBySeqNo } from '../model/course';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { LoadingService } from './loading.service';
@@ -29,6 +29,18 @@ export class CoursesStore {
         .filter(course => course.category === category)
         .sort(sortCoursesBySeqNo))
     );
+  }
+
+  public saveCourse(courseId: string, changes: Partial<Course>): Observable<any> {
+  // .pipe(catchError(err => {
+  //     const message = 'Could not save course';
+  //     console.log(message, err);
+  //     this.messagesService.showErrors(message);
+  //     return throwError(err);
+  //   }))
+
+    return of(null);
+
   }
 
   private loadAllCourses() {
