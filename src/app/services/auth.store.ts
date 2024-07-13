@@ -9,6 +9,8 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AuthStore {
 
+  private readonly AUTH_DATA = 'auth_data';
+
   private userSubject = new BehaviorSubject<User>(null);
 
   public isLoggedIn$: Observable<boolean>;
@@ -25,6 +27,8 @@ export class AuthStore {
     this.isLoggedOut$ = this.isLoggedIn$.pipe(
       map(isLoggedIn => !isLoggedIn)
     );
+
+    this.getUserProfileFromStorage();
   }
 
   public get user$(): Observable<User> {
@@ -34,13 +38,33 @@ export class AuthStore {
   public login(email: string, password: string): Observable<User> {
     return this.http.post<User>('/api/login', {email, password})
       .pipe(
-        tap(user => this.userSubject.next(user)),
+        tap(user => {
+          this.userSubject.next(user);
+          this.saveUserProfileToStorage(user);
+        }),
         shareReplay()
       );
   }
 
-  public logout() {
+  public logout(): void {
     this.userSubject.next(null);
+    this.clearUserProfileFromStorage();
+  }
+
+  private saveUserProfileToStorage(user: User): void {
+    localStorage.setItem(this.AUTH_DATA, JSON.stringify(user));
+  }
+
+  private getUserProfileFromStorage(): void {
+    const storageValue = localStorage.getItem(this.AUTH_DATA);
+    if (storageValue) {
+      const user = JSON.parse(storageValue);
+      this.userSubject.next(user);
+    }
+  }
+
+  private clearUserProfileFromStorage(): void {
+    localStorage.removeItem(this.AUTH_DATA);
   }
 
 }
