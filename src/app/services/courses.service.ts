@@ -20,6 +20,13 @@ export class CoursesService {
       );
   }
 
+  public loadCourseById(courseId: number): Observable<Course> {
+    return this.http.get<Course>(`/api/courses/${courseId}`)
+      .pipe(
+        shareReplay()
+      );
+  }
+
   public saveCourse(courseId: string, changes: Partial<Course>): Observable<Course> {
     return this.http.put<Course>(`/api/courses/${courseId}`, changes)
       .pipe(shareReplay());
